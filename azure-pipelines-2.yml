@@ -1,0 +1,20 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: Docker@2
+  inputs:
+    containerRegistry: 'SudipNeupane1'  # Replace with your ACR service connection name
+    repository: 'hello-world'  # Replace with your ACR repository name
+    command: 'buildAndPush'
+    Dockerfile: 'Dockerfile'
+    tags: 'latest'
+
+- task: AzureWebAppContainer@1
+  inputs:
+    azureSubscription: 'd8c99020-9fe5-4df4-b702-4b7ef095a58e'  # Replace with your ARM service connection name
+    appName: 'Neupanes'  # Replace with your Azure App Service name
+    imageName: 'SudipNeupane1.azurecr.io/Neupanes:lastest'  # Replace with your ACR image path
