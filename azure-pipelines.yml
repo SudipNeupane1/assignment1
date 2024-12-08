@@ -1,0 +1,27 @@
+trigger:
+  - main  # Replace 'main' with the branch you wish to deploy
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: UseContainerRegistry@1
+  inputs:
+    containerRegistry: '$(sudip100955238)'  # Replace with your ACR name
+    repository: '$(assignment1)' # Replace with your GitHub repo name
+    imageName: '$(IMAGE_NAME)'
+    tag: '$(Build.BuildId)'
+
+- task: Docker@2
+  inputs:
+    containerRegistry: '$(ACR_NAME)'
+    repository: '$(REPOSITORY_NAME)'
+    command: 'buildAndPush'
+    Dockerfile: 'Dockerfile'
+    tags: '$(Build.BuildId)'
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'd8c99020-9fe5-4df4-b702-4b7ef095a58e' # Replace with your Azure subscription service connection
+    appName: 'Neupanes'  # Replace with your Azure App Service name
+    imageName: '$(ACR_NAME).azurecr.io/$(IMAGE_NAME):$(Build.BuildId)'
